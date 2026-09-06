@@ -60,3 +60,24 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t nhtsa-api .
+
+      - name: Run Docker container
+        run: |
+          docker run -d \
+            --name nhtsa-api-smoke \
+            -p 8000:8000 \
+            nhtsa-api
+
+      - name: Wait for API
+        run: |
+          for i in {1..10}; do
+            if curl --fail http://127.0.0.1:8000/openapi.json; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Stop Docker container
+        if: always()
+        run: docker rm -f nhtsa-api-smoke
