@@ -64,6 +64,7 @@ pyzmq==27.1.0
 referencing==0.37.0
 requests==2.34.2
 rpds-py==0.30.0
+ruff==0.16.6
 six==1.17.0
 SQLAlchemy==2.0.52
 stack-data==0.6.3

@@ -4,9 +4,9 @@ from fastapi.responses import JSONResponse
 from app.clients.exceptions import (
     NHTSABadRequestError,
     NHTSAHTTPError,
+    NHTSANotFoundError,
     NHTSATimeoutError,
     NHTSAUnavailableError,
-    NHTSANotFoundError,
 )
 
 
@@ -39,6 +39,7 @@ def nhtsa_unavailable_handler(
         content={"detail": str(exc)},
     )
 
+
 def nhtsa_not_found_handler(
     request: Request,
     exc: NHTSANotFoundError,
@@ -47,6 +48,7 @@ def nhtsa_not_found_handler(
         status_code=404,
         content={"detail": str(exc)},
     )
+
 
 def nhtsa_http_error_handler(
     request: Request,

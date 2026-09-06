@@ -4,7 +4,6 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 
-
 client = TestClient(app)
 
 
@@ -54,9 +53,7 @@ def test_vehicle_models_returns_404_when_no_models(
     response = client.get("/vehicles/models/TOTO")
 
     assert response.status_code == 404
-    assert response.json() == {
-        "detail": "No models found for this make"
-    }
+    assert response.json() == {"detail": "No models found for this make"}
 
     mock_fetch_models.assert_called_once_with("TOTO")
 
@@ -102,16 +99,12 @@ def test_vehicle_years_returns_404_when_no_years(
     )
 
     assert response.status_code == 404
-    assert response.json() == {
-        "detail": "No years found for this vehicle"
-    }
+    assert response.json() == {"detail": "No years found for this vehicle"}
 
     mock_get_vehicle_years.assert_called_once()
 
 
-@patch(
-    "app.api.routes.vehicles.get_vehicle_complaint_analysis"
-)
+@patch("app.api.routes.vehicles.get_vehicle_complaint_analysis")
 def test_complaints_ranking_returns_analysis(mock_analysis):
     mock_analysis.return_value = {
         "make": "HONDA",
@@ -133,9 +126,7 @@ def test_complaints_ranking_returns_analysis(mock_analysis):
         ],
     }
 
-    response = client.get(
-        "/vehicles/HONDA/CIVIC/2018/complaints/ranking"
-    )
+    response = client.get("/vehicles/HONDA/CIVIC/2018/complaints/ranking")
 
     assert response.status_code == 200
     assert response.json() == mock_analysis.return_value
@@ -147,22 +138,16 @@ def test_complaints_ranking_returns_analysis(mock_analysis):
     )
 
 
-@patch(
-    "app.api.routes.vehicles.get_vehicle_complaint_analysis"
-)
+@patch("app.api.routes.vehicles.get_vehicle_complaint_analysis")
 def test_complaints_ranking_returns_404_when_no_complaints(
     mock_analysis,
 ):
     mock_analysis.return_value = None
 
-    response = client.get(
-        "/vehicles/HONDA/CIVIC/1900/complaints/ranking"
-    )
+    response = client.get("/vehicles/HONDA/CIVIC/1900/complaints/ranking")
 
     assert response.status_code == 404
-    assert response.json() == {
-        "detail": "No complaints found for this vehicle"
-    }
+    assert response.json() == {"detail": "No complaints found for this vehicle"}
 
     mock_analysis.assert_called_once_with(
         make="HONDA",

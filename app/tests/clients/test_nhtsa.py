@@ -5,22 +5,19 @@ import requests
 
 from app.clients.exceptions import (
     NHTSABadRequestError,
+    NHTSAHTTPError,
+    NHTSANotFoundError,
     NHTSATimeoutError,
     NHTSAUnavailableError,
-    NHTSANotFoundError,
-    NHTSAHTTPError
 )
-from app.clients.nhtsa import fetch_complaints, _get, fetch_makes
-
+from app.clients.nhtsa import _get, fetch_complaints, fetch_makes
 
 
 @patch("app.clients.nhtsa.requests.get")
 def test_fetch_complaints_raises_unavailable_error_on_500(mock_get):
     response = Mock()
     response.status_code = 500
-    response.raise_for_status.side_effect = requests.HTTPError(
-        "500 Server Error"
-    )
+    response.raise_for_status.side_effect = requests.HTTPError("500 Server Error")
 
     mock_get.return_value = response
 
@@ -36,9 +33,7 @@ def test_fetch_complaints_raises_unavailable_error_on_500(mock_get):
 def test_fetch_complaints_raises_not_found_error_on_404(mock_get):
     response = Mock()
     response.status_code = 404
-    response.raise_for_status.side_effect = requests.HTTPError(
-        "404 Client Error"
-    )
+    response.raise_for_status.side_effect = requests.HTTPError("404 Client Error")
 
     mock_get.return_value = response
 
@@ -108,9 +103,7 @@ def test_fetch_complaints_returns_results_on_200(mock_get):
 
     response = Mock()
     response.status_code = 200
-    response.json.return_value = {
-        "results": expected_results
-    }
+    response.json.return_value = {"results": expected_results}
 
     mock_get.return_value = response
 
@@ -127,9 +120,7 @@ def test_fetch_complaints_returns_results_on_200(mock_get):
 def test_fetch_complaints_raises_http_error_on_unhandled_4xx(mock_get):
     response = Mock()
     response.status_code = 403
-    response.raise_for_status.side_effect = requests.HTTPError(
-        "403 Client Error"
-    )
+    response.raise_for_status.side_effect = requests.HTTPError("403 Client Error")
     mock_get.return_value = response
 
     with pytest.raises(NHTSAHTTPError):
@@ -144,9 +135,7 @@ def test_fetch_complaints_raises_http_error_on_unhandled_4xx(mock_get):
 def test_fetch_makes_raises_nhtsa_http_error_on_403(mock_get):
     response = Mock()
     response.status_code = 403
-    response.raise_for_status.side_effect = requests.HTTPError(
-        "403 Client Error"
-    )
+    response.raise_for_status.side_effect = requests.HTTPError("403 Client Error")
     mock_get.return_value = response
 
     with pytest.raises(NHTSAHTTPError):

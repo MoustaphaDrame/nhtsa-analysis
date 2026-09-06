@@ -13,8 +13,10 @@ class NHTSAUnavailableError(NHTSAClientError):
 class NHTSABadRequestError(NHTSAClientError):
     """Raised when the NHTSA API rejects the request."""
 
+
 class NHTSANotFoundError(NHTSAClientError):
     """Raised when the requested NHTSA resource is not found."""
+
 
 class NHTSAHTTPError(NHTSAClientError):
     """Raised for an unhandled HTTP error returned by the NHTSA API."""

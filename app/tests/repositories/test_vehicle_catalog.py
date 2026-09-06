@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 from sqlalchemy import create_engine, delete
@@ -11,10 +11,7 @@ from app.repositories.vehicle_catalog import (
     replace_vehicle_cache,
 )
 
-
-TEST_DATABASE_URL = (
-    "postgresql+psycopg://postgres:postgres@localhost:5432/nhtsa_test"
-)
+TEST_DATABASE_URL = "postgresql+psycopg://postgres:postgres@localhost:5432/nhtsa_test"
 
 engine = create_engine(TEST_DATABASE_URL)
 
@@ -46,7 +43,7 @@ def test_replace_and_get_vehicle_years(db):
         make="HONDA",
         model="CIVIC",
         years=[2018, 2019, 2020],
-        fetched_at=datetime.now(),
+        fetched_at=datetime.now(timezone.utc).replace(tzinfo=None),
     )
 
     years = get_years_for_vehicle(
@@ -59,7 +56,7 @@ def test_replace_and_get_vehicle_years(db):
 
 
 def test_get_vehicle_cache(db):
-    fetched_at = datetime.now()
+    fetched_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
     replace_vehicle_cache(
         db,
@@ -87,7 +84,7 @@ def test_replace_vehicle_cache_replaces_existing_years(db):
         make="HONDA",
         model="CIVIC",
         years=[2018, 2019, 2020],
-        fetched_at=datetime.now(),
+        fetched_at=datetime.now(timezone.utc).replace(tzinfo=None),
     )
 
     replace_vehicle_cache(
@@ -95,7 +92,7 @@ def test_replace_vehicle_cache_replaces_existing_years(db):
         make="HONDA",
         model="CIVIC",
         years=[2021, 2022],
-        fetched_at=datetime.now(),
+        fetched_at=datetime.now(timezone.utc).replace(tzinfo=None),
     )
 
     years = get_years_for_vehicle(
@@ -113,7 +110,7 @@ def test_replace_vehicle_cache_stores_empty_result_metadata(db):
         make="HONDA",
         model="UNKNOWN",
         years=[],
-        fetched_at=datetime.now(),
+        fetched_at=datetime.now(timezone.utc).replace(tzinfo=None),
     )
 
     years = get_years_for_vehicle(

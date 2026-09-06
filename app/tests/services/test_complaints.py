@@ -1,7 +1,12 @@
+from unittest.mock import patch
+
 import pandas as pd
 
-from unittest.mock import Mock, patch
-from app.services.complaints import get_component_ranking, get_severity_stats, get_vehicle_complaint_analysis
+from app.services.complaints import (
+    get_component_ranking,
+    get_severity_stats,
+    get_vehicle_complaint_analysis,
+)
 
 
 def test_get_component_ranking():

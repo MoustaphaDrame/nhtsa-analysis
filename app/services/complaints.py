@@ -18,24 +18,13 @@ def get_complaints_dataframe(
 
 
 def get_component_ranking(df: pd.DataFrame) -> pd.DataFrame:
-    components = (
-        df["components"]
-        .dropna()
-        .str.split(",")
-        .explode()
-        .str.strip()
-    )
+    components = df["components"].dropna().str.split(",").explode().str.strip()
 
     ranking = (
-        components
-        .value_counts()
-        .rename_axis("component")
-        .reset_index(name="count")
+        components.value_counts().rename_axis("component").reset_index(name="count")
     )
 
-    ranking["percentage"] = (
-        ranking["count"] / len(df) * 100
-    ).round(1)
+    ranking["percentage"] = (ranking["count"] / len(df) * 100).round(1)
 
     return ranking
 
@@ -45,7 +34,7 @@ def get_severity_stats(df: pd.DataFrame) -> dict:
         "crashes": int(df["crash"].sum()),
         "fires": int(df["fire"].sum()),
         "injuries": int(df["numberOfInjuries"].sum()),
-        "deaths": int(df["numberOfDeaths"].sum())
+        "deaths": int(df["numberOfDeaths"].sum()),
     }
 
 

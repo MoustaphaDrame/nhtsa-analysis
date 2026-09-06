@@ -1,20 +1,18 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import requests
 
 from app.clients.exceptions import (
     NHTSABadRequestError,
+    NHTSAHTTPError,
     NHTSANotFoundError,
     NHTSATimeoutError,
     NHTSAUnavailableError,
-    NHTSAHTTPError
 )
-
 
 BASE_URL = "https://api.nhtsa.gov/complaints/complaintsByVehicle"
 VPIC_BASE_URL = "https://vpic.nhtsa.dot.gov/api/vehicles"
-TIMEOUT =  10
-
+TIMEOUT = 10
 
 
 def _get(
@@ -29,18 +27,12 @@ def _get(
             timeout=TIMEOUT,
         )
     except requests.Timeout as exc:
-        raise NHTSATimeoutError(
-            "NHTSA API request timed out"
-        ) from exc
+        raise NHTSATimeoutError("NHTSA API request timed out") from exc
     except requests.ConnectionError as exc:
-        raise NHTSAUnavailableError(
-            "NHTSA API is unavailable"
-        ) from exc
+        raise NHTSAUnavailableError("NHTSA API is unavailable") from exc
 
     if 500 <= response.status_code < 600:
-        raise NHTSAUnavailableError(
-            "NHTSA API is unavailable"
-        )
+        raise NHTSAUnavailableError("NHTSA API is unavailable")
 
     return response
 
@@ -49,9 +41,7 @@ def _raise_for_status(response: requests.Response) -> None:
     try:
         response.raise_for_status()
     except requests.HTTPError as exc:
-        raise NHTSAHTTPError(
-            "NHTSA API returned an unexpected HTTP error"
-        ) from exc
+        raise NHTSAHTTPError("NHTSA API returned an unexpected HTTP error") from exc
 
 
 def fetch_makes() -> list[str]:
@@ -62,10 +52,7 @@ def fetch_makes() -> list[str]:
 
     data = response.json()
 
-    makes = [
-        item["Make_Name"]
-        for item in data["Results"]
-    ]
+    makes = [item["Make_Name"] for item in data["Results"]]
 
     return sorted(makes)
 
@@ -78,38 +65,29 @@ def fetch_models(make: str) -> list[str]:
 
     data = response.json()
 
-    models = [
-        item["Model_Name"]
-        for item in data["Results"]
-    ]
+    models = [item["Model_Name"] for item in data["Results"]]
 
     return sorted(set(models))
 
+
 def fetch_complaints(make: str, model: str, year: int) -> list[dict]:
-    params = {
-        "make": make,
-        "model": model,
-        "modelYear": year
-    }
+    params = {"make": make, "model": model, "modelYear": year}
 
     response = _get(BASE_URL, params=params)
 
     if response.status_code == 400:
-        raise NHTSABadRequestError(
-        "NHTSA API rejected the complaint request"
-    )
+        raise NHTSABadRequestError("NHTSA API rejected the complaint request")
 
     if response.status_code == 404:
-        raise NHTSANotFoundError(
-        "NHTSA resource was not found"
-    )
+        raise NHTSANotFoundError("NHTSA resource was not found")
 
     _raise_for_status(response)
 
     return response.json()["results"]
 
+
 def fetch_years_for_model(make: str, model: str) -> list[int]:
-    current_year = datetime.now().year
+    current_year = datetime.now(timezone.utc).year
     years = []
 
     for year in range(1996, current_year + 2):
@@ -123,10 +101,7 @@ def fetch_years_for_model(make: str, model: str) -> list[int]:
 
         data = response.json()
 
-        models = {
-            item["Model_Name"].strip().lower()
-            for item in data["Results"]
-        }
+        models = {item["Model_Name"].strip().lower() for item in data["Results"]}
 
         if model.strip().lower() in models:
             years.append(year)

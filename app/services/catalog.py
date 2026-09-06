@@ -9,7 +9,6 @@ from app.repositories.vehicle_catalog import (
     replace_vehicle_cache,
 )
 
-
 VEHICLE_CATALOG_CACHE_TTL_DAYS = 7
 
 
@@ -30,10 +29,8 @@ def get_vehicle_years(
 
     now = datetime.now(timezone.utc).replace(tzinfo=None)
 
-    if (
-        cache is not None
-        and now - cache.fetched_at
-        < timedelta(days=VEHICLE_CATALOG_CACHE_TTL_DAYS)
+    if cache is not None and now - cache.fetched_at < timedelta(
+        days=VEHICLE_CATALOG_CACHE_TTL_DAYS
     ):
         return get_years_for_vehicle(
             db,

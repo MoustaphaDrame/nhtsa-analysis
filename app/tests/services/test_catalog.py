@@ -1,5 +1,4 @@
-from datetime import datetime, timedelta
-
+from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, patch
 
 from app.services.catalog import get_vehicle_years
@@ -16,7 +15,9 @@ def test_get_vehicle_years_uses_valid_cache(
     db = Mock()
 
     cache = Mock()
-    cache.fetched_at = datetime.now() - timedelta(days=1)
+    cache.fetched_at = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(
+        days=1
+    )
 
     mock_get_cache.return_value = cache
     mock_get_years.return_value = [2020, 2019, 2018]
@@ -84,7 +85,9 @@ def test_get_vehicle_years_fetches_vpic_when_cache_expired(
     db = Mock()
 
     cache = Mock()
-    cache.fetched_at = datetime.now() - timedelta(days=8)
+    cache.fetched_at = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(
+        days=8
+    )
 
     mock_get_cache.return_value = cache
     mock_fetch_years.return_value = [2024, 2023, 2022]
@@ -116,7 +119,9 @@ def test_get_vehicle_years_uses_valid_empty_cache(
     db = Mock()
 
     cache = Mock()
-    cache.fetched_at = datetime.utcnow() - timedelta(days=1)
+    cache.fetched_at = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(
+        days=1
+    )
 
     mock_get_cache.return_value = cache
     mock_get_years.return_value = []

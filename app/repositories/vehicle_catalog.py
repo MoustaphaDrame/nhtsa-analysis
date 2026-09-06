@@ -1,9 +1,9 @@
+from datetime import datetime
+
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.db.models import VehicleCatalog, VehicleCatalogCache
-
-from datetime import datetime
 
 
 def get_years_for_vehicle(

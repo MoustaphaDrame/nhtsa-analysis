@@ -1,17 +1,15 @@
 import requests
 import streamlit as st
 
-
 API_URL = "http://127.0.0.1:8000"
 
 
 st.title("NHTSA Vehicle Complaints")
 
+
 @st.cache_data
 def load_makes():
-    response = requests.get(
-        f"{API_URL}/vehicles/makes"
-    )
+    response = requests.get(f"{API_URL}/vehicles/makes")
     response.raise_for_status()
 
     return response.json()
@@ -19,19 +17,16 @@ def load_makes():
 
 @st.cache_data
 def load_models(make):
-    response = requests.get(
-        f"{API_URL}/vehicles/models/{make}"
-    )
+    response = requests.get(f"{API_URL}/vehicles/models/{make}")
     response.raise_for_status()
 
     return response.json()
 
+
 @st.cache_data
 def load_years(make, model):
-    response = requests.get(
-        f"{API_URL}/vehicles/years/{make}/{model}"
-    )
-    
+    response = requests.get(f"{API_URL}/vehicles/years/{make}/{model}")
+
     if response.status_code == 404:
         return []
 
@@ -42,56 +37,33 @@ def load_years(make, model):
 
 makes = load_makes()
 
-make = st.selectbox(
-    "Make",
-    makes,
-    index=makes.index("HONDA")
-)
+make = st.selectbox("Make", makes, index=makes.index("HONDA"))
 
 models = load_models(make)
 
-default_model = (
-    models.index("Civic")
-    if "Civic" in models
-    else 0
-)
+default_model = models.index("Civic") if "Civic" in models else 0
 
-model = st.selectbox(
-    "Model",
-    models,
-    index=default_model
-)
+model = st.selectbox("Model", models, index=default_model)
 
 years = load_years(make, model)
 
 if not years:
     st.warning("No available years found for this vehicle.")
     st.stop()
-    
-year = st.selectbox(
-    "Year",
-    years
-)
+
+year = st.selectbox("Year", years)
 
 if st.button("Analyze"):
-    url = (
-        f"{API_URL}/vehicles/"
-        f"{make}/{model}/{year}/complaints/ranking"
-    )
+    url = f"{API_URL}/vehicles/{make}/{model}/{year}/complaints/ranking"
 
     response = requests.get(url)
 
     if response.status_code == 200:
         data = response.json()
 
-        st.header(
-            f"{data['make']} {data['model']} — {data['year']}"
-        )
+        st.header(f"{data['make']} {data['model']} — {data['year']}")
 
-        st.metric(
-            "Total complaints",
-            data["total_complaints"]
-        )
+        st.metric("Total complaints", data["total_complaints"])
 
         st.subheader("Severity")
 

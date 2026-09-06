@@ -1,16 +1,16 @@
-from fastapi import APIRouter, HTTPException, Depends
 from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.clients.nhtsa import (
     fetch_makes,
     fetch_models,
 )
-from app.schemas.vehicles import VehicleComplaintRanking
-from app.services.complaints import get_vehicle_complaint_analysis
-
 from app.db.database import get_db
+from app.schemas.vehicles import VehicleComplaintRanking
 from app.services.catalog import get_vehicle_years
+from app.services.complaints import get_vehicle_complaint_analysis
 
 router = APIRouter(
     prefix="/vehicles",
@@ -35,6 +35,7 @@ def vehicle_models(make: str):
 
     return models
 
+
 @router.get("/years", response_model=list[int])
 def vehicle_years(make: str, model: str, db: Annotated[Session, Depends(get_db)]):
     years = get_vehicle_years(
@@ -50,6 +51,7 @@ def vehicle_years(make: str, model: str, db: Annotated[Session, Depends(get_db)]
         )
 
     return years
+
 
 @router.get(
     "/{make}/{model}/{year}/complaints/ranking",

@@ -6,11 +6,13 @@ class ComponentRanking(BaseModel):
     count: int
     percentage: float
 
+
 class SeverityStats(BaseModel):
     crashes: int
     fires: int
     injuries: int
     deaths: int
+
 
 class VehicleComplaintRanking(BaseModel):
     make: str
