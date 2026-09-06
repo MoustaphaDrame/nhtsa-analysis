@@ -2,10 +2,15 @@ name: NHTSA CI
 
 on:
   push:
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
 
 jobs:
   tests:
+    name: tests
     runs-on: ubuntu-latest
 
     services:
