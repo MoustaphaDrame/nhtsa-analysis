@@ -12,8 +12,10 @@ from app.clients.exceptions import (
 
 def nhtsa_bad_request_handler(
     request: Request,
-    exc: NHTSABadRequestError,
+    exc: Exception,
 ) -> JSONResponse:
+    assert isinstance(exc, NHTSABadRequestError)
+
     return JSONResponse(
         status_code=400,
         content={"detail": str(exc)},
@@ -22,8 +24,10 @@ def nhtsa_bad_request_handler(
 
 def nhtsa_timeout_handler(
     request: Request,
-    exc: NHTSATimeoutError,
+    exc: Exception,
 ) -> JSONResponse:
+    assert isinstance(exc, NHTSATimeoutError)
+
     return JSONResponse(
         status_code=504,
         content={"detail": str(exc)},
@@ -32,8 +36,10 @@ def nhtsa_timeout_handler(
 
 def nhtsa_unavailable_handler(
     request: Request,
-    exc: NHTSAUnavailableError,
+    exc: Exception,
 ) -> JSONResponse:
+    assert isinstance(exc, NHTSAUnavailableError)
+
     return JSONResponse(
         status_code=503,
         content={"detail": str(exc)},
@@ -42,8 +48,10 @@ def nhtsa_unavailable_handler(
 
 def nhtsa_not_found_handler(
     request: Request,
-    exc: NHTSANotFoundError,
+    exc: Exception,
 ) -> JSONResponse:
+    assert isinstance(exc, NHTSANotFoundError)
+
     return JSONResponse(
         status_code=404,
         content={"detail": str(exc)},
@@ -52,8 +60,10 @@ def nhtsa_not_found_handler(
 
 def nhtsa_http_error_handler(
     request: Request,
-    exc: NHTSAHTTPError,
+    exc: Exception,
 ) -> JSONResponse:
+    assert isinstance(exc, NHTSAHTTPError)
+
     return JSONResponse(
         status_code=502,
         content={"detail": str(exc)},
