@@ -18,6 +18,12 @@ from app.clients.exceptions import (
 
 app = FastAPI(title="NHTSA Vehicle Complaints API")
 
+
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
 app.add_exception_handler(
     NHTSABadRequestError,
     nhtsa_bad_request_handler,
