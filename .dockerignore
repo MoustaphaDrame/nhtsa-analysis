@@ -4,12 +4,21 @@ __pycache__/
 
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
 
 .env/
+.env
 
 .git/
 .gitignore
+.github/
 
-.env
+.vscode/
+.idea/
 
 *.log
+
+complaints_analysis.ipynb
+requirements-dev.txt
+README.md
+frontend/
