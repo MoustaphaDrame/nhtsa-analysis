@@ -65,6 +65,7 @@ jobs:
         run: |
           docker run -d \
             --name nhtsa-api-smoke \
+            -e DATABASE_URL="$DATABASE_URL" \
             -p 8000:8000 \
             nhtsa-api
 
