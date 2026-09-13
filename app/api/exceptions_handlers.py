@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import OperationalError
@@ -9,6 +11,8 @@ from app.clients.exceptions import (
     NHTSATimeoutError,
     NHTSAUnavailableError,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def nhtsa_bad_request_handler(
@@ -29,6 +33,12 @@ def nhtsa_timeout_handler(
 ) -> JSONResponse:
     assert isinstance(exc, NHTSATimeoutError)
 
+    logger.error(
+        "NHTSA timeout while handling %s %s: %s",
+        request.method,
+        request.url.path,
+        exc,
+    )
     return JSONResponse(
         status_code=504,
         content={"detail": str(exc)},
@@ -41,6 +51,12 @@ def nhtsa_unavailable_handler(
 ) -> JSONResponse:
     assert isinstance(exc, NHTSAUnavailableError)
 
+    logger.error(
+        "NHTSA unavailable while handling %s %s: %s",
+        request.method,
+        request.url.path,
+        exc,
+    )
     return JSONResponse(
         status_code=503,
         content={"detail": str(exc)},
@@ -65,6 +81,13 @@ def nhtsa_http_error_handler(
 ) -> JSONResponse:
     assert isinstance(exc, NHTSAHTTPError)
 
+    logger.error(
+        "NHTSA upstream error while handling %s %s: %s",
+        request.method,
+        request.url.path,
+        exc,
+    )
+
     return JSONResponse(
         status_code=502,
         content={"detail": str(exc)},
@@ -76,6 +99,13 @@ def database_unavailable_handler(
     exc: Exception,
 ) -> JSONResponse:
     assert isinstance(exc, OperationalError)
+
+    logger.error(
+        "Database unavailable while handling %s %s: %s",
+        request.method,
+        request.url.path,
+        exc,
+    )
 
     return JSONResponse(
         status_code=503,
