@@ -1,5 +1,6 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import OperationalError
 
 from app.clients.exceptions import (
     NHTSABadRequestError,
@@ -67,4 +68,16 @@ def nhtsa_http_error_handler(
     return JSONResponse(
         status_code=502,
         content={"detail": str(exc)},
+    )
+
+
+def database_unavailable_handler(
+    request: Request,
+    exc: Exception,
+) -> JSONResponse:
+    assert isinstance(exc, OperationalError)
+
+    return JSONResponse(
+        status_code=503,
+        content={"detail": "Database unavailable"},
     )

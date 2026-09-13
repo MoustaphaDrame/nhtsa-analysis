@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
+from sqlalchemy.exc import OperationalError
 
 from app.clients.exceptions import (
     NHTSABadRequestError,
@@ -66,3 +67,20 @@ def test_http_error_returns_502(mock_analysis):
 
     assert response.status_code == 502
     assert response.json() == {"detail": "NHTSA API returned an unexpected HTTP error"}
+
+
+@patch("app.api.routes.vehicles.get_vehicle_years")
+def test_database_unavailable_returns_503(mock_get_vehicle_years):
+    mock_get_vehicle_years.side_effect = OperationalError(
+        statement="SELECT 1",
+        params=None,
+        orig=Exception("database unavailable"),
+    )
+
+    response = client.get(
+        "/vehicles/years",
+        params={"make": "HONDA", "model": "CIVIC"},
+    )
+
+    assert response.status_code == 503
+    assert response.json() == {"detail": "Database unavailable"}

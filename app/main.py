@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+from sqlalchemy.exc import OperationalError
 
 from app.api.exceptions_handlers import (
+    database_unavailable_handler,
     nhtsa_bad_request_handler,
     nhtsa_http_error_handler,
     nhtsa_not_found_handler,
@@ -48,6 +50,11 @@ app.add_exception_handler(
 app.add_exception_handler(
     NHTSAHTTPError,
     nhtsa_http_error_handler,
+)
+
+app.add_exception_handler(
+    OperationalError,
+    database_unavailable_handler,
 )
 
 app.include_router(vehicles_router)
