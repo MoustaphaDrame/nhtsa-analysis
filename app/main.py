@@ -7,6 +7,7 @@ from app.api.exceptions_handlers import (
     nhtsa_timeout_handler,
     nhtsa_unavailable_handler,
 )
+from app.api.routes.health import router as health_router
 from app.api.routes.vehicles import router as vehicles_router
 from app.clients.exceptions import (
     NHTSABadRequestError,
@@ -50,3 +51,4 @@ app.add_exception_handler(
 )
 
 app.include_router(vehicles_router)
+app.include_router(health_router)
