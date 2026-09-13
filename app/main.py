@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import FastAPI
 from sqlalchemy.exc import OperationalError
 
@@ -17,6 +19,10 @@ from app.clients.exceptions import (
     NHTSANotFoundError,
     NHTSATimeoutError,
     NHTSAUnavailableError,
+)
+
+logging.basicConfig(
+    level=logging.INFO,
 )
 
 app = FastAPI(title="NHTSA Vehicle Complaints API")
